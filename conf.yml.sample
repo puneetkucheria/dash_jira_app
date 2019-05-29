@@ -1,0 +1,3 @@
+user: "<<user name>>"
+pass: "<<password>>"
+jira_site: "<<address to jira site>>"
