@@ -37,15 +37,33 @@ def get_projects(one='',two=''):
 #    print(df)
     return df
 
+def get_issue_active_sprint(issue):
+    import re
+    sprint_name = re.compile('name=(.+),star')
+    sprint_state = re.compile('state=(.+),name')
+    try:
+        status=[[sprint_name.search(sprint)[0][5:-5],
+            sprint_state.search(sprint)[0][6:-5]] for sprint in issue.fields.customfield_10101]
+        sprint_df =pd.DataFrame(status, columns=['Sprint','State'])
+        #print(sprint_df)
+        active_sprint=sprint_df[sprint_df['State']=='ACTIVE']['Sprint'].reset_index(drop=True)
+        print(active_sprint)
+        #print(str(active_sprint['Sprint'][0]),'return')
+        #print(active_sprint['Sprint'][0].issue.key)
+        return active_sprint
+    except:
+        #print(pd.DataFrame([''],columns=['Sprint'])['Sprint'][0],'except')
+        return pd.DataFrame([''],columns=['Sprint'])['Sprint'][0]
+
 def get_project_details(project):
 
     if project:
     # Calculate issue table for all issues
         issues=pd.DataFrame(([issue.fields.project.name, issue.key, 
             issue.fields.summary, issue.fields.status.name, 
-            issue.fields.issuetype.name] for issue in jira_s.search_issues("project ="+project)), 
-            columns=['Project Name','Issue ID','Issue Summary','Status','Issue Type'])
-    #    print(issues.columns)
+            issue.fields.issuetype.name,get_issue_active_sprint(issue)] for issue in jira_s.search_issues("project ="+project)), 
+            columns=['Project Name','Issue ID','Issue Summary','Status','Issue Type','Active Sprint'])
+        #print(issues)
 
         # Calculate issue count table
         issue_type_count=pd.DataFrame(issues['Issue Type'].value_counts())
@@ -84,7 +102,7 @@ layout = html.Div([
                     )]
                 ),
                 html.Div(html.H3('Project Dashboard',style={'textAlign':'center'}),className='col-sm-6'),
-                html.Div(dcc.Link('Portfolio Dashboard',href='/apps/app2'), className='col-sm-4')
+                html.Div(dcc.Link('Portfolio Dashboard',href='/apps/app2'), style={'margin-top': 20, 'margin-bottom': 20}, className='col-sm-4')
             ]),
         dcc.Dropdown(
         id='portfolio_dd', className='col-sm-4',
@@ -136,7 +154,7 @@ def project_table(project_id,sub,port):
         issues, issue_type_count, issue_status_count = get_project_details(project_id)
         test = generate_table(issue_type_count[['Issue Type','Issue Count']],20,html_class='col-sm-2')
         issue_type = generate_table(issue_status_count[['Status Type','Issue Count']],max_rows=10,html_class='col-sm-2')
-        issue_table = generate_table(issues,20,html_class='col-sm-12')
+        issue_table = generate_table(issues,60,html_class='col-sm-12')
 
     return (test,issue_type,issue_table)
 
