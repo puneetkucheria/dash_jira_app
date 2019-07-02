@@ -23,7 +23,7 @@ layout = html.Div([
                     )]
                 ),
                 html.Div(html.H3('Project Dashboard',style={'textAlign':'center'}),className='col-sm-6'),
-                html.Div(dcc.Link('Portfolio Dashboard',href='/apps/app2'), style={'margin-top': 20, 'margin-bottom': 20}, className='col-sm-4')
+                html.Div(dcc.Link('Portfolio Dashboard',href='/portfolio'), style={'margin-top': 20, 'margin-bottom': 20}, className='col-sm-4')
             ]),
         dcc.Dropdown(
         id='portfolio_dd', className='col-sm-4',

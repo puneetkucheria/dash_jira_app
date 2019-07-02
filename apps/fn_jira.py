@@ -74,4 +74,11 @@ def get_project_details(project):
         return [],[],[]
     return issues,issue_type_count,issue_status_count
 
+if __name__ == "__main__":
 
+    with open("conf.yml","r") as yml_file:
+        config = yaml.load(yml_file)
+
+    jira_s = JIRA(config['jira_site'], auth=(config['user'],config['pass']))
+
+    
