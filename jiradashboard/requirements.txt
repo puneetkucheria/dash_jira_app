@@ -1,0 +1,6 @@
+jira==2.0.1.0rc1
+pandas==0.24.2
+dash==0.43.0
+dash_html_components==0.16.0
+dash_core_components==0.48.0
+PyYAML==5.1.1
