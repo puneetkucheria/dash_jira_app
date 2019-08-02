@@ -25,8 +25,7 @@ layout = html.Div([
                 html.Div(html.H3('Project Dashboard',style={'textAlign':'center'}),className='col-sm-6'),
                 html.Div(dcc.Link('Portfolio Dashboard',href='/portfolio'), style={'margin-top': 20, 'margin-bottom': 20}, className='col-sm-4')
             ]),
-        dcc.Dropdown(
-        id='portfolio_dd', className='col-sm-4',
+    dcc.Dropdown(id='portfolio_dd', className='col-sm-4',
         options=[
             {'label': row['displayName'], 'value': row['id'] } for index,row in get_portfolios().iterrows() 
         ]
@@ -63,6 +62,12 @@ def project_dd(portfolio,subportfolio):
 def reset_pro_dd(port,subport):
     return ''
 
+@app.callback(
+        Output('subportfolio_dd','value'),
+        [Input('portfolio_dd','value')])
+def reset_subplat_dd(port):
+    return ''
+
 
 @app.callback(
         Output('project_table','children'),
@@ -78,6 +83,14 @@ def project_table(project_id,sub,port,s_project_id):
         issues, issue_type_count, issue_status_count = get_project_details(project_id)
         test = generate_table(issue_type_count[['Issue Type','Issue Count']],20,html_class='col-sm-2')
         issue_type = generate_table(issue_status_count[['Status Type','Issue Count']],max_rows=10,html_class='col-sm-2')
-        issue_table = generate_table(issues,60,html_class='col-sm-12')
-    return (test,issue_type,issue_table)
+        issue_table = generate_table(issues,60,html_class='col-sm-12')        
+        return (test,issue_type,issue_table)
+    if sub:
+        return html.Div('Sub-Protrolio Selected')
+    if port:
+        
+        return html.Div('Portfolio Selected')
+    portfolios=generate_table(get_portfolio_mapping().rename(columns={'displayName':'Portfolio','id':'ID'}))
+    return (portfolios)
+        
 
